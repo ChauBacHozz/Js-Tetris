@@ -4,15 +4,20 @@ let grids_height = game_grid.offsetHeight;
 
 let squares_onrow = grids_width / 30;
 let squares_oncol = grids_height / 30;
+let rows = [];
 let grids = [];
+let points = 0;
 // draw game grid
-for (let i = 0; i < squares_oncol; i++) {
+for (let i = 0; i < squares_oncol * squares_onrow; i+=squares_onrow) {
+    let row = [];
     for (let j = 0; j < squares_onrow; j++) {
+        row.push(i + j);
         let grid = document.createElement('div');
         grid.className = 'grid';
         game_grid.appendChild(grid);
         grids.push(grid);
     }
+    rows.push(row);
 }
 // tetromino types
 let oTetromino = [
@@ -103,41 +108,70 @@ function checkEdge() {
         tetromino[rotation].forEach(e => {
             grids[e + current].classList.add('taken');
         })
+        
         tetromino = tetrominos[Math.floor(Math.random() * 7)];
         current = 4;
         rotation = 0;
+        // let tRow = takenRow
+        if (takenRow().length != 0) {
+            let tRow_arr = takenRow();
+            for (let i = 0; i < tRow_arr.length; i++) {
+                // console.log(tRow_arr[i]);
+                tRow_arr[i].forEach(x => {
+                    grids[x].classList.remove('taken');
+                    grids[x].classList.remove('tetromino');
+                                        
+                })
+                if (i == 0) {
+                    for (let j = 0; j < tRow_arr[i][0]; j++) {
+                        if (grids[j].classList.contains('taken')) {
+                                                        
+                        }                       
+                    }
+                    // console.log(grids[tRow_arr[i][0]]);
+                    // console.log('Hello');
+                    
+                    
+                }
+            }
+           
+        }
         return true;
     }
     return false;
 }
+
+// check pieces position
 function leftEdge(tetromino) {
     return tetromino.some(e => (e + current) % squares_onrow == 0)
 }
 function rightEdge(tetromino) {
     return tetromino.some(e => (e + current) % squares_onrow == 11)
 }
-function rotate(tetromino) {
-    rotation = ++rotation  %  4;
-}
-function fLength(tetromino) {
-    return tetromino[3] % squares_onrow - tetromino[0] % squares_onrow + 1;
+// move tetromino around
+function rotate() {
+    if (!checkEdge()) {
+        if (!(leftEdge(tetromino[(rotation + 1) % 4]) 
+        && rightEdge(tetromino[(rotation + 1) % 4]))) {
+            undraw(tetromino[rotation], current);
+            rotation = ++rotation % 4;
+            draw(tetromino[rotation], current);
+        }
+    }
+
 }
 function move(e) {
     if (e.keyCode == 32) {
-        if (!checkEdge()) {
-            undraw(tetromino[rotation], current);
-            rotate()
-            draw(tetromino[rotation], current)        
-        }
+        rotate();
     }
     if (e.keyCode == 37) {
-        moveLeft()
+        moveLeft();
     }
     if (e.keyCode == 39) {
-        moveRight()
+        moveRight();
     }
     if (e.keyCode == 40) {
-        moveDown()
+        moveDown();
     }
 }
 
@@ -146,7 +180,6 @@ function moveDown() {
     undraw(tetromino[rotation], current)
     current += squares_onrow;
     draw(tetromino[rotation], current);
-    console.log(fLength(tetromino[rotation]));
     
 }
 
@@ -158,7 +191,7 @@ function moveLeft() {
         draw(tetromino[rotation], current);
         
     }
-
+    
 }
 function moveRight() {
     if (tetromino[rotation].every(e=> !grids[e + current + 1].classList.contains('taken')) &&
@@ -170,5 +203,20 @@ function moveRight() {
         
     }
 }
-
 document.addEventListener('keydown', move);
+
+function takenRow() {
+    // if (grids.length - (tetromino[rotation][3] + current) < squares_onrow + 1) {
+    //     return -1;
+    // } else {
+    //     return tet.find(e => grids[e + current + squares_onrow].classList.contains('taken')) + current;
+    
+    // }
+    let tRow = [];
+    rows.forEach(e => {
+        if (e.every(x => grids[x].classList.contains('taken'))){
+            tRow.push(e);
+        }
+    })
+    return tRow;
+}
