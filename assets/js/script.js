@@ -1,4 +1,5 @@
 let game_grid = document.querySelector('#game-grid');
+let game_score = document.querySelector('#score');
 let grids_width = game_grid.offsetWidth;
 let grids_height = game_grid.offsetHeight;
 
@@ -7,6 +8,9 @@ let squares_oncol = grids_height / 30;
 let rows = [];
 let grids = [];
 let points = 0;
+game_score.innerHTML = points;
+// console.log(game_score);
+
 // draw game grid
 for (let i = 0; i < squares_oncol * squares_onrow; i+=squares_onrow) {
     let row = [];
@@ -115,6 +119,7 @@ function checkEdge() {
         // let tRow = takenRow
         if (takenRow().length != 0) {
             let tRow_arr = takenRow();
+            let count = 0;
             for (let i = 0; i < tRow_arr.length; i++) {
                 // console.log(tRow_arr[i]);
                 tRow_arr[i].forEach(x => {
@@ -122,18 +127,18 @@ function checkEdge() {
                     grids[x].classList.remove('tetromino');
                                         
                 })
-                if (i == 0) {
-                    for (let j = 0; j < tRow_arr[i][0]; j++) {
-                        if (grids[j].classList.contains('taken')) {
-                                                        
-                        }                       
-                    }
-                    // console.log(grids[tRow_arr[i][0]]);
-                    // console.log('Hello');
-                    
-                    
-                }
+                count++;
             }
+            for (let j = tRow_arr[0][0] - 1; j >= 0; j--) {
+                if (grids[j].classList.contains('taken')) {
+                    grids[j].classList.remove('taken');
+                    grids[j + squares_onrow*count].classList.add('taken');
+                    grids[j].classList.remove('tetromino');
+                    grids[j + squares_onrow*count].classList.add('tetromino');
+                }                       
+            }
+            points += count * 10;
+            game_score.innerHTML = points;
            
         }
         return true;
