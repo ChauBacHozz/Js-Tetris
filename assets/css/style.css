@@ -37,15 +37,30 @@ body {
     grid-template-rows: repeat(24, 1fr);
 }
 #info-section {
+    text-align: center; 
     background-color: blueviolet;
     width: 240px;
     height: 600px;
     /* width: 50%; */
 }
 #score-section {
-    text-align: center;
-    padding: 40px 0;
+    padding: 44px 0;
     font-size: 36px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
     height: 400px;
 }
+#start-btn {
+    color: rgb(42, 18, 58);
+    margin-top: 44px;
+    /* background-color: aqua; */
+    font-size: 24px;
+    padding: 12px;
+}
+/* #cover-section {
+    position: absolute;
+    height: 120px;
+    /* width: ; *
+/* .grid:first-of-type {
+    display: none;
+} */
