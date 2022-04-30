@@ -2,6 +2,7 @@ let game_grid = document.querySelector('#game-grid');
 let game_score = document.querySelector('#score');
 let grids_width = game_grid.offsetWidth;
 let grids_height = game_grid.offsetHeight;
+let lose_scr = document.querySelector('#lose-scr')
 let start_btn = document.querySelector('#start-btn');
 let squares_onrow = grids_width / 30;
 let squares_oncol = grids_height / 30;
@@ -9,7 +10,6 @@ let rows = [];
 let grids = [];
 let points = 0;
 // console.log(game_score);
-// let looping = true;
 
 // draw game grid
 for (let i = 0; i < squares_oncol * squares_onrow; i+=squares_onrow) {
@@ -25,11 +25,8 @@ for (let i = 0; i < squares_oncol * squares_onrow; i+=squares_onrow) {
 }
 for (let i = 0; i < squares_onrow*4; i++) {
     grids[i].setAttribute("style", "visibility: hidden;");
-    // console.log(grids[i]);
-    
 }
 // tetromino types
-// grids[0].style.display = 'none';
 let oTetromino = [
     [0, 1, squares_onrow, 1 + squares_onrow],
     [0, 1, squares_onrow, 1 + squares_onrow],
@@ -231,6 +228,13 @@ function takenRow() {
 
 start_btn.onclick = () => {
     if (gameLoop == 0) {
+        grids.forEach(x => {
+            x.classList.remove('taken');
+            x.classList.remove('tetromino');
+            lose_scr.setAttribute("style", "display: none;");
+            points = 0;
+            game_score.innerHTML = points;
+        })
         gameLooping();
     } else if (gameLoop == -1) {
         // undraw(tetromino[rotation],current);
@@ -243,9 +247,12 @@ start_btn.onclick = () => {
     
 }
 function checkLose() {
-    for (let i = 0; i < squares_onrow; i++) {
+    for (let i = squares_onrow * 3; i < squares_onrow * 4; i++) {
         if (grids[i].classList.contains('taken')) {
-            
+            clearInterval(gameLoop);
+            gameLoop = 0;
+            lose_scr.setAttribute("style", "display: block;");
+
         }        
     }
 }
