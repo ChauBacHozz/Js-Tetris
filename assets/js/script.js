@@ -9,8 +9,7 @@ let squares_oncol = grids_height / 30;
 let rows = [];
 let grids = [];
 let points = 0;
-// console.log(game_score);
-
+let colors = ['lightcoral', 'lightgreen', 'lightblue','lightseagreen','lightsalmon'];
 // draw game grid
 for (let i = 0; i < squares_oncol * squares_onrow; i+=squares_onrow) {
     let row = [];
@@ -85,21 +84,24 @@ let tetrominos = [
     lTetromino,
     rv_lTetromino
 ]
-function draw (tet, pos) {
+function draw (tet, pos,col) {
+
     tet.forEach(e => {
-        grids[pos+e].classList.add('tetromino');
+        
+        grids[pos+e].style.background = color;
     })
 }
 
 function undraw (tet, pos) {
     tet.forEach(e => {
-        grids[pos+e].classList.remove('tetromino');
+        grids[pos+e].style.background = 'white';
     })
 }
 let rotation = 0;
 let current = 4;
 let tetromino = tetrominos[Math.floor(Math.random() * 7)];
 let gameLoop = 0;
+let color = colors[Math.floor(Math.random() * 5)];
 // tetromino auto move down
 function gameLooping() {
     gameLoop = setInterval(() => {
@@ -107,7 +109,7 @@ function gameLooping() {
         checkEdge();
         undraw(tetromino[rotation], current)
         current += squares_onrow;
-        draw(tetromino[rotation], current);
+        draw(tetromino[rotation], current, color);
     }, 500)
 
 };
@@ -118,19 +120,19 @@ function checkEdge() {
         tetromino[rotation].forEach(e => {
             grids[e + current].classList.add('taken');
         })
-        
+        color = colors[Math.floor(Math.random() * 5)];
         tetromino = tetrominos[Math.floor(Math.random() * 7)];
         current = 4;
         rotation = 0;
-        // let tRow = takenRow
+        // console.log(tetromino);
+        
         if (takenRow().length != 0) {
             let tRow_arr = takenRow();
             let count = 0;
             for (let i = 0; i < tRow_arr.length; i++) {
-                // console.log(tRow_arr[i]);
                 tRow_arr[i].forEach(x => {
                     grids[x].classList.remove('taken');
-                    grids[x].classList.remove('tetromino');
+                    grids[x].style.background = 'white';
                                         
                 })
                 count++;
@@ -139,8 +141,9 @@ function checkEdge() {
                 if (grids[j].classList.contains('taken')) {
                     grids[j].classList.remove('taken');
                     grids[j + squares_onrow*count].classList.add('taken');
-                    grids[j].classList.remove('tetromino');
-                    grids[j + squares_onrow*count].classList.add('tetromino');
+                    let cl = grids[j].style.background;
+                    grids[j].style.background = 'white';
+                    grids[j + squares_onrow*count].style.background = cl;
                 }                       
             }
             points += count * 10;
@@ -190,7 +193,7 @@ function moveDown() {
     checkEdge();
     undraw(tetromino[rotation], current)
     current += squares_onrow;
-    draw(tetromino[rotation], current);
+    draw(tetromino[rotation], current, color);
     
 }
 
@@ -199,7 +202,7 @@ function moveLeft() {
     !leftEdge(tetromino[rotation])){
         undraw(tetromino[rotation], current)
         current -= 1;
-        draw(tetromino[rotation], current);
+        draw(tetromino[rotation], current, color);
         
     }
     
@@ -210,7 +213,7 @@ function moveRight() {
     {
         undraw(tetromino[rotation], current)
         current += 1;
-        draw(tetromino[rotation], current);
+        draw(tetromino[rotation], current, color);
         
     }
 }
@@ -237,8 +240,6 @@ start_btn.onclick = () => {
         })
         gameLooping();
     } else if (gameLoop == -1) {
-        // undraw(tetromino[rotation],current);
-        // draw(tetromino[rotation],current + squares_onrow);
         gameLooping();
     } else {
         clearInterval(gameLoop);
